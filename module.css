@@ -1,0 +1,27 @@
+.SSRSReport input[type="text"] {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 1px solid #bfbfbf !important;
+  background: #f3f3f3 !important;
+  padding: 2px 0 1px !important;
+  _padding: 2px 0 0 !important;
+  width: 100% !important;
+  _height: 18px !important;
+  outline: 0 !important;
+  -webkit-appearance: none !important;
+  color: black !important;
+}
+
+.SSRSReport select {
+    height: 18px;
+	padding: 0px;
+}
+
+.SSRSReport  .aspNetDisabled {
+	color: black !important;
+	cursor: default !important;
+}
+
+.SSRSReport td , .SSRSReport tr{
+	line-height: 1.0em !important;
+}
