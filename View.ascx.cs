@@ -16,6 +16,7 @@ using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Modules.Actions;
 using DotNetNuke.Services.Localization;
+using Gafware.Modules.SSRSReportViewer.Components;
 
 namespace Gafware.Modules.SSRSReportViewer
 {
@@ -40,6 +41,9 @@ namespace Gafware.Modules.SSRSReportViewer
             {
                 if (!IsPostBack)
                 {
+                    FeatureController test = new FeatureController();
+                    test.UpgradeModule("test");
+
                     lstReports.DataSource = Gafware.Modules.SSRSReportViewer.Components.ReportController.GetReports();
                     lstReports.DataBind();
                     lstReports.Items.Insert(0, new System.Web.UI.WebControls.ListItem("--Select Report--", String.Empty));

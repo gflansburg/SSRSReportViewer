@@ -129,17 +129,71 @@ namespace Gafware.Modules.SSRSReportViewer.Components
         /// -----------------------------------------------------------------------------
         public string UpgradeModule(string Version)
         {
+            bool found = false;
             Configuration config = WebConfigurationManager.OpenWebConfiguration("~");
             HttpHandlersSection section = (HttpHandlersSection)config.GetSection("system.web/httpHandlers");
             foreach(HttpHandlerAction handler in section.Handlers)
             {
                 if(handler.Path.Equals("Reserved.ReportViewerWebControl.axd"))
                 {
-                    return Version;
+                    found = true;
+                    break;
                 }
             }
-            section.Handlers.Add(new HttpHandlerAction("Reserved.ReportViewerWebControl.axd", "Microsoft.Reporting.WebForms.HttpHandler, Microsoft.ReportViewer.WebForms, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91", "*"));
-            config.Save();
+            if (!found)
+            {
+                section.Handlers.Add(new HttpHandlerAction("Reserved.ReportViewerWebControl.axd", "Microsoft.Reporting.WebForms.HttpHandler, Microsoft.ReportViewer.WebForms, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91", "*"));
+                config.Save();
+            }
+
+            found = false;
+            CompilationSection comSection = (CompilationSection)config.GetSection("system.web/compilation");
+            foreach(BuildProvider buildProvider in comSection.BuildProviders)
+            {
+                if(buildProvider.Extension.Equals(".rdlc"))
+                {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found)
+            {
+                comSection.BuildProviders.Add(new BuildProvider(".rdlc", "Microsoft.Reporting.RdlBuildProvider, Microsoft.ReportViewer.WebForms, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"));
+                config.Save();
+            }
+
+            found = false;
+            for(int i = 0; i < comSection.Assemblies.Count; i++)
+            {
+                if(comSection.Assemblies[i].Assembly.StartsWith("Microsoft.ReportViewer.WebForms"))
+                {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found)
+            {
+                comSection.Assemblies.Add(new AssemblyInfo("Microsoft.ReportViewer.WebForms, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845DCD8080CC91"));
+                config.Save();
+            }
+
+            found = false;
+            for (int i = 0; i < comSection.Assemblies.Count; i++)
+            {
+                if (comSection.Assemblies[i].Assembly.StartsWith("Microsoft.ReportViewer.Common"))
+                {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found)
+            {
+                comSection.Assemblies.Add(new AssemblyInfo("Microsoft.ReportViewer.Common, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845DCD8080CC91"));
+                config.Save();
+            }
+
+            //ConfigurationSection handlersSection = config.GetSection("system.webServer/handlers");
+            //ConfigurationElementCollection handlersCollection = handlersSection.GetCollection();
 
             /*section = (HttpHandlersSection)config.GetSection("system.webServer/handlers");
             foreach (HttpHandlerAction handler in section.Handlers)
